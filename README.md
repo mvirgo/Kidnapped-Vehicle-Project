@@ -1,4 +1,7 @@
-# Overview
+# Localization with Particle Filters - Finding a Kidnapped Vehicle (Udacity SDCND Term 2, Project 3)
+
+**This project is in progress. The below is related to the original ReadMe file provided by Udacity and will be updated for my project details and some visualizations as it nears completion.**
+
 This repository contains all the code needed to complete the final project for the Localization course in Udacity's Self-Driving Car Nanodegree.
 
 #### Submission
