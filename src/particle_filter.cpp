@@ -11,9 +11,6 @@
 #include "particle_filter.h"
 using namespace std;
 
-// Engine for later generation of particles
-default_random_engine gen;
-
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Sets the number of particles. Initializes all particles to first position (based on estimates of
   // x, y, theta and their uncertainties from GPS) and all weights to 1.
@@ -23,11 +20,14 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
   // *** Can be tuned ***
   num_particles = 100;
     
-  // Size weights vector based on num_particles
-  vector<double> weights (num_particles);
+  // Resize weights vector based on num_particles
+  weights.resize(num_particles);
     
-  // Initialize vector of particles
-  vector<Particle> particles (num_particles);
+  // Resize vector of particles
+  particles.resize(num_particles);
+  
+  // Engine for later generation of particles
+  default_random_engine gen;
     
   // Creates a normal (Gaussian) distribution for x, y and theta (yaw).
   normal_distribution<double> dist_x(x, std[0]);
@@ -36,7 +36,6 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
     
   // Initializes particles - from the normal distributions set above
   for (int i = 0; i < num_particles; ++i) {
-    double particle_x, particle_y, particle_theta;
       
     // Add generated particle data to particles class
     particles[i].id = i;
@@ -54,7 +53,15 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], double velocity, double yaw_rate) {
-	// Adds measurements to each particle and adds random Gaussian noise.
+	// Adds measurements for velocity and yaw_rate to each particle and adds random Gaussian noise.
+  
+  // Engine for later generation of particles
+  default_random_engine gen;
+  
+  // Make distributions for adding noise
+  normal_distribution<double> dist_x(0, std_pos[0]);
+  normal_distribution<double> dist_y(0, std_pos[1]);
+  normal_distribution<double> dist_theta(0, std_pos[2]);
   
   // Different equations based on if yaw_rate is zero or not
   for (int i = 0; i < num_particles; ++i) {
@@ -72,16 +79,11 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
       // Theta will stay the same due to no yaw_rate
       
     }
-    
-    // Make distributions for adding noise
-    normal_distribution<double> dist_x(particles[i].x, std_pos[0]);
-    normal_distribution<double> dist_y(particles[i].y, std_pos[1]);
-    normal_distribution<double> dist_theta(particles[i].theta, std_pos[2]);
-    
-    // Generate the new particles
-    particles[i].x = dist_x(gen);
-    particles[i].y = dist_y(gen);
-    particles[i].theta = dist_theta(gen);
+
+    // Add noise to the particles
+    particles[i].x += dist_x(gen);
+    particles[i].y += dist_y(gen);
+    particles[i].theta += dist_theta(gen);
     
   }
   
