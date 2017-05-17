@@ -1,5 +1,16 @@
 # Localization with Particle Filters - Finding a Kidnapped Vehicle (Udacity SDCND Term 2, Project 3)
 
+### Completed Steps
+* Initialization function (estimate position from GPS data using particle filters, add random noise)
+* Prediction function (predict position based on adding velocity and yaw rate to particle filters, add random noise)
+
+### Upcoming Steps
+* Update Weights function (update based on landmark observations)
+* Resample function (resample particles, replacing based on weights)
+* Optimizing algorithm (# of particles, other areas upcoming; attempt to approve accuracy and speed)
+* Adding visualizations
+* Cleaning up ReadMe
+
 **This project is in progress. The below is related to the original ReadMe file provided by Udacity and will be updated for my project details and some visualizations as it nears completion.**
 
 This repository contains all the code needed to complete the final project for the Localization course in Udacity's Self-Driving Car Nanodegree.
