@@ -91,7 +91,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 
 }
 
-void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations) {
+void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted, vector<LandmarkObs>& observations) {
 	// TODO: Find the predicted measurement that is closest to each observed measurement and assign the 
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
@@ -100,18 +100,55 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
-		std::vector<LandmarkObs> observations, Map map_landmarks) {
-	// TODO: Update the weights of each particle using a mult-variate Gaussian distribution. You can read
+		vector<LandmarkObs> observations, Map map_landmarks) {
+	// Updates the weights of each particle using a multi-variate Gaussian distribution. You can read
 	//   more about this distribution here: https://en.wikipedia.org/wiki/Multivariate_normal_distribution
-	// NOTE: The observations are given in the VEHICLE'S coordinate system. Your particles are located
-	//   according to the MAP'S coordinate system. You will need to transform between the two systems.
-	//   Keep in mind that this transformation requires both rotation AND translation (but no scaling).
-	//   The following is a good resource for the theory:
-	//   https://www.willamette.edu/~gorr/classes/GeneralGraphics/Transforms/transforms2d.htm
-	//   and the following is a good resource for the actual equation to implement (look at equation 
-	//   3.33. Note that you'll need to switch the minus sign in that equation to a plus to account 
-	//   for the fact that the map's y-axis actually points downwards.)
-	//   http://planning.cs.uiuc.edu/node99.html
+  
+  // Iterate through each particle
+  for (int i = 0; i < num_particles; ++i) {
+    
+    // Vector to hold multi-variate Gaussian distribution of each observation
+    vector<LandmarkObs> mvGd;
+    
+    // For each observation
+    for (int j = 0; j < observations.size(); ++j) {
+      
+      // Transform the observation point (from vehicle coordinates to map coordinates)
+      observations[j].x = observations[j].x * cos(particles[i].theta) - observations[j].y * sin(particles[i].theta) + particles[i].x;
+      observations[j].y = observations[j].x * sin(particles[i].theta) + observations[j].y * cos(particles[i].theta) + particles[i].y;
+      
+      // Find nearest landmark
+      vector<Map::single_landmark_s> landmarks = map_landmarks.landmark_list;
+      vector<double> landmark_obs_dist (landmarks.size());
+      for (int k = 0; k < landmarks.size(); ++k) {
+        
+        // Down-size possible amount of landmarks to look at by only looking at those in sensor range of the particle
+        // If in range, put in the distance vector for calculating nearest neighbor
+        double landmark_part_dist = sqrt(pow(particles[i].x - landmarks[k].x_f, 2) + pow(particles[i].y - landmarks[k].y_f, 2));
+        if (landmark_part_dist <= sensor_range) {
+          landmark_obs_dist[k] = sqrt(pow(observations[j].x - landmarks[k].x_f, 2) + pow(observations[j].y - landmarks[k].y_f, 2));
+          
+        }
+        
+      }
+      
+      // Associate the observation point with its nearest landmark neighbor
+      int min_pos = distance(landmark_obs_dist.begin(),min_element(landmark_obs_dist.begin(),landmark_obs_dist.end()));
+      float nn_x = landmarks[min_pos].x_f;
+      float nn_y = landmarks[min_pos].y_f;
+      
+      // Calculate multi-variate Gaussian distribution
+      //mvGd[j] = multi-variate Gaussian distribution equation
+      
+    }
+    
+    // Update weights with combined multi-variate Gaussian distribution
+    //double comb_mvGd = 0.0;
+    //for (int n : mvGd) comb_mvGd *= n;
+    //particles[i].weight = comb_mvGd;
+    
+  }
+  
 }
 
 void ParticleFilter::resample() {
@@ -121,10 +158,10 @@ void ParticleFilter::resample() {
 
 }
 
-void ParticleFilter::write(std::string filename) {
+void ParticleFilter::write(string filename) {
 	// You don't need to modify this file.
-	std::ofstream dataFile;
-	dataFile.open(filename, std::ios::app);
+	ofstream dataFile;
+	dataFile.open(filename, ios::app);
 	for (int i = 0; i < num_particles; ++i) {
 		dataFile << particles[i].x << " " << particles[i].y << " " << particles[i].theta << "\n";
 	}
