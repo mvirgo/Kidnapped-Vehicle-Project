@@ -3,11 +3,13 @@
 ### Completed Steps
 * Initialization function (estimate position from GPS data using particle filters, add random noise)
 * Prediction function (predict position based on adding velocity and yaw rate to particle filters, add random noise)
+* Update Weights function - Transformation of observation points to map coordinates (given in vehicle coordinates)
+* Update Weights function - Association of landmarks to the transformed observation points
 
 ### Upcoming Steps
-* Update Weights function (update based on landmark observations)
+* Finish Update Weights function (Multi-Variate Gaussian calculation)
 * Resample function (resample particles, replacing based on weights)
-* Optimizing algorithm (# of particles, other areas upcoming; attempt to approve accuracy and speed)
+* Optimizing algorithm (# of particles, other areas upcoming; attempt to improve accuracy and speed)
 * Adding visualizations
 * Cleaning up ReadMe
 
