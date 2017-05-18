@@ -5,9 +5,9 @@
 * Prediction function (predict position based on adding velocity and yaw rate to particle filters, add random noise)
 * Update Weights function - Transformation of observation points to map coordinates (given in vehicle coordinates)
 * Update Weights function - Association of landmarks to the transformed observation points
+* Update Weights function - Calculation of multi-variate Gaussian distribution
 
 ### Upcoming Steps
-* Finish Update Weights function (Multi-Variate Gaussian calculation)
 * Resample function (resample particles, replacing based on weights)
 * Optimizing algorithm (# of particles, other areas upcoming; attempt to improve accuracy and speed)
 * Adding visualizations
