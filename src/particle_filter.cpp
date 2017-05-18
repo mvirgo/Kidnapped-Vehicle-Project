@@ -103,12 +103,18 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		vector<LandmarkObs> observations, Map map_landmarks) {
 	// Updates the weights of each particle using a multi-variate Gaussian distribution. You can read
 	//   more about this distribution here: https://en.wikipedia.org/wiki/Multivariate_normal_distribution
+  // First, when iterating through each particle, need to transform observation points to map coordinates.
+  // Next, associate each observation to its nearest landmark. The distribution can then be calculated.
+  
+  // First term of multi-variate normal Gaussian distribution calculated below
+  // It stays the same so can be outside the loop
+  double a = 1 / (2 * M_PI * std_landmark[0] * std_landmark[1]);
   
   // Iterate through each particle
   for (int i = 0; i < num_particles; ++i) {
     
     // Vector to hold multi-variate Gaussian distribution of each observation
-    vector<LandmarkObs> mvGd;
+    vector<double> mvGd (observations.size());
     
     // For each observation
     for (int j = 0; j < observations.size(); ++j) {
@@ -138,14 +144,16 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       float nn_y = landmarks[min_pos].y_f;
       
       // Calculate multi-variate Gaussian distribution
-      //mvGd[j] = multi-variate Gaussian distribution equation
+      double b = pow(observations[j].x - nn_x, 2) / (2 * pow(std_landmark[0], 2)) +
+                 pow(observations[j].y - nn_y, 2) / (2 * pow(std_landmark[1], 2));
+      mvGd[j] = a * exp(-b);
       
     }
     
     // Update weights with combined multi-variate Gaussian distribution
-    //double comb_mvGd = 0.0;
-    //for (int n : mvGd) comb_mvGd *= n;
-    //particles[i].weight = comb_mvGd;
+    double comb_mvGd = 0.0;
+    for (int n : mvGd) comb_mvGd *= n;
+    particles[i].weight = comb_mvGd;
     
   }
   
