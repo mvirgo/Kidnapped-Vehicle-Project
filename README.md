@@ -6,13 +6,10 @@
 * Update Weights function - Transformation of observation points to map coordinates (given in vehicle coordinates)
 * Update Weights function - Association of landmarks to the transformed observation points
 * Update Weights function - Calculation of multi-variate Gaussian distribution
-
-## Current Status
-I am currently de-bugging the above functions, as only the very first observation of the first particle is ending up with a weight that can be used for re-sampling (everything else is zero). 
+* Resample function - Resamples particles, with replacement occurring based on weighting distributions
+* Optimizing algorithm - Performance within required accuracy and speed
 
 ### Upcoming Steps
-* Resample function (resample particles, replacing based on weights)
-* Optimizing algorithm (# of particles, other areas upcoming; attempt to improve accuracy and speed)
 * Adding visualizations
 * Cleaning up ReadMe
 
