@@ -7,6 +7,9 @@
 * Update Weights function - Association of landmarks to the transformed observation points
 * Update Weights function - Calculation of multi-variate Gaussian distribution
 
+## Current Status
+I am currently de-bugging the above functions, as only the very first observation of the first particle is ending up with a weight that can be used for re-sampling (everything else is zero). 
+
 ### Upcoming Steps
 * Resample function (resample particles, replacing based on weights)
 * Optimizing algorithm (# of particles, other areas upcoming; attempt to improve accuracy and speed)
