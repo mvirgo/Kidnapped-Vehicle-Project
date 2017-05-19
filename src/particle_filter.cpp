@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <map>
 
 #include "particle_filter.h"
 using namespace std;
@@ -109,7 +110,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   // First term of multi-variate normal Gaussian distribution calculated below
   // It stays the same so can be outside the loop
   double a = 1 / (2 * M_PI * std_landmark[0] * std_landmark[1]);
-  
+
   // Iterate through each particle
   for (int i = 0; i < num_particles; ++i) {
     
@@ -133,6 +134,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         double landmark_part_dist = sqrt(pow(particles[i].x - landmarks[k].x_f, 2) + pow(particles[i].y - landmarks[k].y_f, 2));
         if (landmark_part_dist <= sensor_range) {
           landmark_obs_dist[k] = sqrt(pow(observations[j].x - landmarks[k].x_f, 2) + pow(observations[j].y - landmarks[k].y_f, 2));
+
+        } else {
+          // Need to fill those outside of distance with huge number, or they'll be a zero (and think they are closest)
+          landmark_obs_dist[k] = 999999.0;
           
         }
         
@@ -148,13 +153,16 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
                  pow(observations[j].y - nn_y, 2) / (2 * pow(std_landmark[1], 2));
       mvGd[j] = a * exp(-b);
       
+      //cout << "x: "<< j << " " << observations[j].x <<" " << nn_x <<endl;
+      //cout << "y: "<< j << " " << observations[j].y <<" " << nn_y <<endl;
+      //cout << mvGd[j] << endl;
     }
     
     // Update weights with combined multi-variate Gaussian distribution
-    double comb_mvGd = 0.0;
-    for (int n : mvGd) comb_mvGd *= n;
+    double comb_mvGd = 1.0;
+    for (double n : mvGd) comb_mvGd *= n;
     particles[i].weight = comb_mvGd;
-    
+    //cout << comb_mvGd << endl;
   }
   
 }
@@ -163,6 +171,25 @@ void ParticleFilter::resample() {
 	// TODO: Resample particles with replacement with probability proportional to their weight. 
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
+  
+  // Vector for new particles
+  //vector<double> new_particles (num_particles);
+  
+  // Put all particle weights in weights vector
+  //for (int i = 0; i < num_particles; ++i) weights[i] = particles[i].weight;
+  
+  //for (int i = 0; i < num_particles; ++i) {
+    //cout << particles[i].weight << endl;
+  //}
+  
+  // Use discrete distribution to return particles by weight
+  //random_device rd;
+  //mt19937 gen(rd());
+  //discrete_distribution<> d(weights);
+  //map<int, int> m;
+  //for (int n = 0; n < num_particles; ++n) {
+    //++m[d(gen)];
+  //}
 
 }
 
