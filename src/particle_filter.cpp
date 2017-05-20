@@ -99,13 +99,17 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   
   // First term of multi-variate normal Gaussian distribution calculated below
   // It stays the same so can be outside the loop
-  double a = 1 / (2 * M_PI * std_landmark[0] * std_landmark[1]);
+  const double a = 1 / (2 * M_PI * std_landmark[0] * std_landmark[1]);
+  
+  // The denominators of the mvGd also stay the same
+  const double x_denom = 2 * std_landmark[0] * std_landmark[0];
+  const double y_denom = 2 * std_landmark[1] * std_landmark[1];
 
   // Iterate through each particle
   for (int i = 0; i < num_particles; ++i) {
     
-    // Vector to hold multi-variate Gaussian distribution of each observation
-    vector<double> mvGd (observations.size());
+    // For calculating multi-variate Gaussian distribution of each observation, for each particle
+    double mvGd = 1.0;
     
     // For each observation
     for (int j = 0; j < observations.size(); ++j) {
@@ -142,17 +146,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       // Calculate multi-variate Gaussian distribution
       double x_diff = trans_obs_x - nn_x;
       double y_diff = trans_obs_y - nn_y;
-      double x_denom = 2 * std_landmark[0] * std_landmark[0];
-      double y_denom = 2 * std_landmark[1] * std_landmark[1];
       double b = ((x_diff * x_diff) / x_denom) + ((y_diff * y_diff) / y_denom);
-      mvGd[j] = a * exp(-b);
+      mvGd *= a * exp(-b);
       
     }
     
-    // Update weights with combined multi-variate Gaussian distribution
-    double comb_mvGd = 1.0;
-    for (double n : mvGd) comb_mvGd *= n;
-    particles[i].weight = comb_mvGd;
+    // Update particle weights with combined multi-variate Gaussian distribution
+    particles[i].weight = mvGd;
     weights[i] = particles[i].weight;
 
   }
