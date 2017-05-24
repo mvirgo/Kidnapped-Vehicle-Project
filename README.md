@@ -1,6 +1,13 @@
-# Localization with Particle Filters - Finding a Kidnapped Vehicle (Udacity SDCND Term 2, Project 3)
+# Localization with Particle Filters - Finding a Kidnapped Vehicle
+Udacity SDCND Term 2, Project 3
 
-### Completed Steps
+## Project Basics
+In this C++ project, I used a two-dimensional particle filter to help localize a car placed in an somewhat unknown location. I began by using less accurate map data (similar to GPS) to initialize my car's location, predicted my new location based on velocity and yaw (turn) rate, transformed sensor observation points into my map coordinates, associated these observations with landmarks on the map, and then calculated the likelihood that a given particle made those observation based off of the landmark positions in the map. The particles were then re-sampled based on how likely a given particle was to have made the observations of the landmarks, which helps to more accurately localize the vehicle.
+
+Along with sufficient accuracy to have localized the vehicle within a small amount of space, the project also required having an efficient algorithm, as there was a time limit to how long it could run for without failing the given parameters.
+
+### Project Steps
+All steps within 'particle_filter.cpp' in the 'src' folder
 * Initialization function (estimate position from GPS data using particle filters, add random noise)
 * Prediction function (predict position based on adding velocity and yaw rate to particle filters, add random noise)
 * Update Weights function - Transformation of observation points to map coordinates (given in vehicle coordinates)
@@ -9,25 +16,8 @@
 * Resample function - Resamples particles, with replacement occurring based on weighting distributions
 * Optimizing algorithm - Performance within required accuracy and speed
 
-### Upcoming Steps
-* Adding visualizations
-* Cleaning up ReadMe
-
-**This project is in progress. The below is related to the original ReadMe file provided by Udacity and will be updated for my project details and some visualizations as it nears completion.**
-
-This repository contains all the code needed to complete the final project for the Localization course in Udacity's Self-Driving Car Nanodegree.
-
-#### Submission
-All you will submit is your completed version of `particle_filter.cpp`, which is located in the `src` directory. You should probably do a `git pull` before submitting to verify that your project passes the most up-to-date version of the grading code (there are some parameters in `src/main.cpp` which govern the requirements on accuracy and run time.)
-
-## Project Introduction
-Your robot has been kidnapped and transported to a new location! Luckily it has a map of this location, a (noisy) GPS estimate of its initial location, and lots of (noisy) sensor and control data.
-
-In this project you will implement a 2 dimensional particle filter in C++. Your particle filter will be given a map and some initial localization information (analogous to what a GPS would provide). At each time step your filter will also get observation and control data. 
-
 ## Running the Code
-Once you have this repository on your machine, `cd` into the repository's root directory and run the following commands from the command line:
-
+Once you have this repository on your machine, cd into the repository's root directory and run the following commands from the command line:
 ```
 > ./clean.sh
 > ./build.sh
@@ -41,95 +31,30 @@ Once you have this repository on your machine, `cd` into the repository's root d
 
 If everything worked you should see something like the following output:
 
+```
 Time step: 2444
 Cumulative mean weighted error: x .1 y .1 yaw .02
 Runtime (sec): 38.187226
 Success! Your particle filter passed!
-
 ```
-Otherwise you might get
-.
-.
-.
-Time step: 100
-Cumulative mean weighted error: x 39.8926 y 9.60949 yaw 0.198841
-Your x error, 39.8926 is larger than the maximum allowable error, 1
-```
+## Results
+### Performance
+The particle filter met the requirements, which were 1 meter in error for x and y translations, 0.05 rad in error for yaw, and 45 seconds of runtime for the particle filter. Please note that due to the random numbers generated in certain portions of my approach (for the Gaussian distributions), results may vary slightly. Error below is cumulative mean weighted error.
 
-Your job is to build out the methods in `particle_filter.cpp` until the last line of output says:
+**Using: 100 particles**
 
-```
-Success! Your particle filter passed!
-```
+Runtime: 17.219 seconds
 
-# Implementing the Particle Filter
-The directory structure of this repository is as follows:
+| Estim |  Error  |
+| ----- | ------- |
+|   x   | 0.11012 | (m)
+|   y   | 0.10526 | (m)
+|  yaw  | 0.00374 | (rad)
 
-```
-root
-|   build.sh
-|   clean.sh
-|   CMakeLists.txt
-|   README.md
-|   run.sh
-|
-|___data
-|   |   control_data.txt
-|   |   gt_data.txt
-|   |   map_data.txt
-|   |
-|   |___observation
-|       |   observations_000001.txt
-|       |   ... 
-|       |   observations_002444.txt
-|   
-|___src
-    |   helper_functions.h
-    |   main.cpp
-    |   map.h
-    |   particle_filter.cpp
-    |   particle_filter.h
-```
+### Visualizing the Car's Localization based on Landmark Observations
+The green lines below are the car's observations of surrounding landmarks. Please see separate visualizer branch in this repository for code necessary to reproduce these results in Udacity's simulator.
+![Localizing](Localizing_screen.png)
 
-The only file you should modify is `particle_filter.cpp` in the `src` directory. The file contains the scaffolding of a `ParticleFilter` class and some associated methods. Read through the code, the comments, and the header file `particle_filter.h` to get a sense for what this code is expected to do.
-
-If you are interested, take a look at `src/main.cpp` as well. This file contains the code that will actually be running your particle filter and calling the associated methods.
-
-## Inputs to the Particle Filter
-You can find the inputs to the particle filter in the `data` directory. 
-
-#### The Map*
-`map_data.txt` includes the position of landmarks (in meters) on an arbitrary Cartesian coordinate system. Each row has three columns
-1. x position
-2. y position
-3. landmark id
-
-> * Map data provided by 3D Mapping Solutions GmbH.
-
-
-#### Control Data
-`control_data.txt` contains rows of control data. Each row corresponds to the control data for the corresponding time step. The two columns represent
-1. vehicle speed (in meters per second)
-2. vehicle yaw rate (in radians per second)
-
-#### Observation Data
-The `observation` directory includes around 2000 files. Each file is numbered according to the timestep in which that observation takes place. 
-
-These files contain observation data for all "observable" landmarks. Here observable means the landmark is sufficiently close to the vehicle. Each row in these files corresponds to a single landmark. The two columns represent:
-1. x distance to the landmark in meters (right is positive) RELATIVE TO THE VEHICLE. 
-2. y distance to the landmark in meters (forward is positive) RELATIVE TO THE VEHICLE.
-
-> **NOTE**
-> The vehicle's coordinate system is NOT the map coordinate system. Your 
-> code will have to handle this transformation.
-
-## Success Criteria
-If your particle filter passes the current grading code (you can make sure you have the current version at any time by doing a `git pull`), then you should pass! 
-
-The two things the grading code is looking for are:
-
-1. **Accuracy**: your particle filter should localize vehicle position and yaw to within the values specified in the parameters `max_translation_error` (maximum allowed error in x or y) and `max_yaw_error` in `src/main.cpp`.
-2. **Performance**: your particle filter should complete execution within the time specified by `max_runtime` in `src/main.cpp`.
 
 
 
