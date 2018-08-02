@@ -18,6 +18,9 @@ struct Particle {
 	double y;
 	double theta;
 	double weight;
+	std::vector<int> associations;
+	std::vector<double> sense_x;
+	std::vector<double> sense_y;
 };
 
 
@@ -25,7 +28,9 @@ struct Particle {
 class ParticleFilter {
 	
 	// Number of particles to draw
-	int num_particles;
+	int num_particles; 
+	
+	
 	
 	// Flag, if filter is initialized
 	bool is_initialized;
@@ -39,7 +44,7 @@ public:
 	std::vector<Particle> particles;
 
 	// Constructor
-	// @param M Number of particles
+	// @param num_particles Number of particles
 	ParticleFilter() : num_particles(0), is_initialized(false) {}
 
 	// Destructor
@@ -79,29 +84,34 @@ public:
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
 	 *   observed measurements. 
 	 * @param sensor_range Range [m] of sensor
-	 * @param std_landmark[] Array of dimension 2 [standard deviation of x [m],
-	 *   standard deviation of y [m]]
+	 * @param std_landmark[] Array of dimension 2 [Landmark measurement uncertainty [x [m], y [m]]]
 	 * @param observations Vector of landmark observations
 	 * @param map Map class containing map landmarks
 	 */
-	void updateWeights(double sensor_range, double std_landmark[], std::vector<LandmarkObs> observations,
-			Map map_landmarks);
+	void updateWeights(double sensor_range, double std_landmark[], const std::vector<LandmarkObs> &observations,
+			const Map &map_landmarks);
 	
 	/**
 	 * resample Resamples from the updated set of particles to form
 	 *   the new set of particles.
 	 */
 	void resample();
-	
+
 	/*
-	 * write Writes particle positions to a file.
-	 * @param filename File to write particle positions to.
+	 * Set a particles list of associations, along with the associations calculated world x,y coordinates
+	 * This can be a very useful debugging tool to make sure transformations are correct and assocations correctly connected
 	 */
-	void write(std::string filename);
+	Particle SetAssociations(Particle& particle, const std::vector<int>& associations,
+		                     const std::vector<double>& sense_x, const std::vector<double>& sense_y);
+
 	
+	std::string getAssociations(Particle best);
+	std::string getSenseX(Particle best);
+	std::string getSenseY(Particle best);
+
 	/**
-	 * initialized Returns whether particle filter is initialized yet or not.
-	 */
+	* initialized Returns whether particle filter is initialized yet or not.
+	*/
 	const bool initialized() const {
 		return is_initialized;
 	}

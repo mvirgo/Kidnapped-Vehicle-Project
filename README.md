@@ -23,36 +23,24 @@ Once you have this repository on your machine, cd into the repository's root dir
 > ./build.sh
 > ./run.sh
 ```
+This will then run in conjunction with the Term 2 simulator.
 
-> **NOTE**
-> If you get any `command not found` problems, you will have to install 
-> the associated dependencies (for example, 
-> [cmake](https://cmake.org/install/))
-
-If everything worked you should see something like the following output:
-
-```
-Time step: 2444
-Cumulative mean weighted error: x .1 y .1 yaw .02
-Runtime (sec): 38.187226
-Success! Your particle filter passed!
-```
 ## Results
 ### Performance
-The particle filter met the requirements, which were 1 meter in error for x and y translations, 0.05 rad in error for yaw, and 45 seconds of runtime for the particle filter. Please note that due to the random numbers generated in certain portions of my approach (for the Gaussian distributions), results may vary slightly. Error below is cumulative mean weighted error.
+The particle filter met the requirements, which were 1 meter in error for x and y translations, 0.05 rad in error for yaw, and 100 seconds of runtime for the particle filter. Please note that due to the random numbers generated in certain portions of my approach (for the Gaussian distributions), results may vary slightly. Error below is cumulative mean weighted error.
 
 **Using: 100 particles**
 
-Runtime: 17.219 seconds
+Runtime: 17.219 seconds (based on old project version)
 
 | Estim |  Error  |
 | ----- | ------- |
-|   x   | 0.11012 | (m)
-|   y   | 0.10526 | (m)
-|  yaw  | 0.00374 | (rad)
+|   x   | 0.113 | (m)
+|   y   | 0.105 | (m)
+|  yaw  | 0.004 | (rad)
 
 ### Visualizing the Car's Localization based on Landmark Observations
-The green lines below are the car's observations of surrounding landmarks. Please see separate visualizer branch in this repository for code necessary to reproduce these results in Udacity's simulator.
+The green lines below are the car's observations of surrounding landmarks.
 ![Localizing](Localizing_screen.png)
 
 
